@@ -1,3 +1,4 @@
+from classifier import SentimentClassifier
 from flask import Flask, render_template, request
 import spacy
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -24,6 +25,7 @@ ENTITY_TYPES_LANG = {
 app = Flask(__name__)
 
 sid = SentimentIntensityAnalyzer()
+sc = SentimentClassifier()
 
 
 @Language.factory("language_detector")
