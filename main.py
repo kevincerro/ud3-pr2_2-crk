@@ -1,4 +1,4 @@
-from classifier import SentimentClassifier
+# from classifier import SentimentClassifier
 from flask import Flask, render_template, request
 import spacy
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -25,7 +25,7 @@ ENTITY_TYPES_LANG = {
 app = Flask(__name__)
 
 sid = SentimentIntensityAnalyzer()
-sc = SentimentClassifier()
+# sc = SentimentClassifier()
 
 
 @Language.factory("language_detector")
@@ -50,7 +50,9 @@ def process():
 
     if lang == 'es':
         # Convert to -1 / 1 range
-        sentiment = (sc.predict(rawtext) * 2) - 1
+        # sentiment = (sc.predict(rawtext) * 2) - 1
+        # Disabled due spanish sentiment analisys is not compatible with heroku deps
+        sentiment = 0
     else:
         sentiment = sid.polarity_scores(rawtext)['compound']
 
