@@ -1,5 +1,7 @@
+from classifier import SentimentClassifier
 from flask import Flask, render_template, request
 import spacy
+from nltk.sentiment import SentimentIntensityAnalyzer
 from spacy.language import Language
 from spacy_langdetect import LanguageDetector
 
@@ -19,7 +21,11 @@ ENTITY_TYPES_LANG = {
         'DATE': '',
     }
 }
+
 app = Flask(__name__)
+
+sid = SentimentIntensityAnalyzer()
+sc = SentimentClassifier()
 
 
 @Language.factory("language_detector")
@@ -42,12 +48,18 @@ def process():
     doc = get_doc_for_lang(rawtext)
     lang = doc._.language['language']
 
+    if lang == 'es':
+        # Convert to -1 / 1 range
+        sentiment = (sc.predict(rawtext) * 2) - 1
+    else:
+        sentiment = sid.polarity_scores(rawtext)['compound']
+
     # Prepare data for template
     results = doc.ents
-    results_filtered = list(filter(lambda e: e.label_ == ENTITY_TYPES_LANG[lang][taskoption], doc.ents))
+    results_filtered = list(filter(lambda e: e.label_ == ENTITY_TYPES_LANG.get(lang, ENTITY_TYPES_LANG['en'])[taskoption], doc.ents))
     num_of_results = len(results_filtered)
 
-    return render_template('index.html', results=results, results_filtered=results_filtered, num_of_results=num_of_results, lang=lang)
+    return render_template('index.html', results=results, results_filtered=results_filtered, num_of_results=num_of_results, lang=lang, sentiment=sentiment)
 
 
 def get_doc_for_lang(text):
@@ -58,8 +70,6 @@ def get_doc_for_lang(text):
     lang = en_nlp(text)._.language['language']
     if lang == 'es':
         es_nlp = spacy.load('es_core_news_md')
-
-        print(es_nlp.get_pipe("ner").labels)
 
         return es_nlp(text)
     else:

@@ -54,6 +54,16 @@
     	<div class="alert alert-success" role="alert">
             <p class="alert-heading">Resultado</p>
             <p>Idioma: {{ lang }}</p>
+            <p>
+                Sentimiento: {{ sentiment }}
+                {% if sentiment == 0 %}
+                    <i class="fa fa-meh-o" aria-hidden="true"></i>
+                {% elif sentiment > 0 %}
+                    <i class="fa fa-smile-o" aria-hidden="true"></i>
+                {% elif sentiment < 0 %}
+                    <i class="fa fa-frown-o" aria-hidden="true"></i>
+                {% endif %}
+            </p>
             <p>Número de registros: {{ num_of_results }}</p>
             <ul>
                 {% for i in results_filtered %}
