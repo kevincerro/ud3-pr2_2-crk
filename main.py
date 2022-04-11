@@ -48,7 +48,7 @@ def process():
 
     # Prepare data for template
     results = doc.ents
-    results_filtered = list(filter(lambda e: e.label_ == ENTITY_TYPES_LANG[lang][taskoption], doc.ents))
+    results_filtered = list(filter(lambda e: e.label_ == ENTITY_TYPES_LANG.get(lang, ENTITY_TYPES_LANG['en'])[taskoption], doc.ents))
     num_of_results = len(results_filtered)
 
     return render_template('index.html', results=results, results_filtered=results_filtered, num_of_results=num_of_results, lang=lang)
@@ -62,8 +62,6 @@ def get_doc_for_lang(text):
     lang = en_nlp(text)._.language['language']
     if lang == 'es':
         es_nlp = spacy.load('es_core_news_md')
-
-        print(es_nlp.get_pipe("ner").labels)
 
         return es_nlp(text)
     else:
