@@ -49,7 +49,8 @@ def process():
     lang = doc._.language['language']
 
     if lang == 'es':
-        sentiment = 0
+        # Convert to -1 / 1 range
+        sentiment = (sc.predict(rawtext) * 2) - 1
     else:
         sentiment = sid.polarity_scores(rawtext)['compound']
 
