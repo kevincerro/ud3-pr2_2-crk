@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import spacy
+from nltk.sentiment import SentimentIntensityAnalyzer
 from spacy.language import Language
 from spacy_langdetect import LanguageDetector
 
@@ -19,7 +20,10 @@ ENTITY_TYPES_LANG = {
         'DATE': '',
     }
 }
+
 app = Flask(__name__)
+
+sid = SentimentIntensityAnalyzer()
 
 
 @Language.factory("language_detector")
