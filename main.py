@@ -46,12 +46,17 @@ def process():
     doc = get_doc_for_lang(rawtext)
     lang = doc._.language['language']
 
+    if lang == 'es':
+        sentiment = 0
+    else:
+        sentiment = sid.polarity_scores(rawtext)['compound']
+
     # Prepare data for template
     results = doc.ents
     results_filtered = list(filter(lambda e: e.label_ == ENTITY_TYPES_LANG.get(lang, ENTITY_TYPES_LANG['en'])[taskoption], doc.ents))
     num_of_results = len(results_filtered)
 
-    return render_template('index.html', results=results, results_filtered=results_filtered, num_of_results=num_of_results, lang=lang)
+    return render_template('index.html', results=results, results_filtered=results_filtered, num_of_results=num_of_results, lang=lang, sentiment=sentiment)
 
 
 def get_doc_for_lang(text):
